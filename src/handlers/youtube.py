@@ -92,7 +92,10 @@ async def handle_youtube_url(
             return
         
         # Delete processing message
-        await processing_msg.delete()
+        try:
+            await processing_msg.delete()
+        except Exception:
+            pass
         
         # Send summary (split if too long)
         header = f"<b>📺 {title}</b>\n\n"
@@ -126,4 +129,7 @@ async def handle_youtube_url(
         
     except Exception as e:
         logger.error(f"Error processing video: {e}")
-        await processing_msg.edit_text(ERROR_AI_FAILED)
+        try:
+            await processing_msg.edit_text(ERROR_AI_FAILED)
+        except Exception:
+            await message.answer(ERROR_AI_FAILED)

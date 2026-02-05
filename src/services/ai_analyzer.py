@@ -3,6 +3,7 @@
 import logging
 import google.generativeai as genai
 from openai import AsyncOpenAI
+from src.utils.formatters import clean_text_for_telegram
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +141,7 @@ RULES:
             response = self.gemini_model.generate_content(prompt)
             
             if response and response.text:
-                return response.text.strip()
+                return clean_text_for_telegram(response.text)
             
             return None
         except Exception as e:
@@ -161,7 +162,7 @@ RULES:
             )
             
             if response.choices:
-                return response.choices[0].message.content.strip()
+                return clean_text_for_telegram(response.choices[0].message.content)
             
             return None
         except Exception as e:

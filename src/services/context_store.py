@@ -27,12 +27,17 @@ class ContextStore:
         self._client = None
     
     async def _get_client(self) -> redis.Redis:
-        """Get or create Redis client."""
+        """Get or create Redis client with resilient settings."""
         if self._client is None:
             self._client = redis.from_url(
                 self.redis_url,
                 encoding="utf-8",
-                decode_responses=True
+                decode_responses=True,
+                socket_timeout=5.0,
+                socket_connect_timeout=5.0,
+                health_check_interval=30,
+                retry_on_timeout=True,
+                ssl_cert_reqs=None # Upstash often works better with this
             )
         return self._client
     
