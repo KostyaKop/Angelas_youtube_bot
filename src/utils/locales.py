@@ -14,17 +14,31 @@ MESSAGES = {
         "footer_answer": "\n\n💬 <i>Можете задати ще питання або надіслати нове посилання</i>",
         "language_name": "українській",
         "settings_title": "⚙️ <b>Налаштування</b>\n\nОберіть вашу мову:",
-        "current_language": "🇺🇦 Українська",
+        "current_language": "Українська",
         "language_selected": "✅ Мову змінено на Українську",
-        "language_btn_uk": "🇺🇦 Українська",
-        "language_btn_en": "🇺🇸 English",
-        "language_btn_ru": "🇷🇺 Русский",
+        # Neutral button labels without flags
+        "language_btn_uk": "UKR",
+        "language_btn_en": "ENG",
+        "language_btn_ru": "RUS",
+        "language_btn_es": "ESP",
         # Analysis headers
         "summary_header": "Головна думка",
         "topics_header": "Ключові теми",
         "positions_header": "Позиції учасників",
         "arguments_header": "Аргументи",
         "conclusions_header": "Практичні висновки",
+        # New: action buttons
+        "btn_shorter": "📝 Коротше",
+        "btn_my_stats": "📊 Статистика",
+        "btn_export": "📥 Експорт",
+        "shorter_processing": "⏳ Роблю коротку версію...",
+        "shorter_result": "<b>📝 Коротка версія:</b>\n\n{content}",
+        # Keyboard buttons
+        "kb_settings": "⚙️ Налаштування",
+        "kb_help": "❓ Допомога",
+        "kb_stats": "📊 Статистика",
+        # Help message
+        "help_message": "<b>🎬 YouTube Аналізатор</b>\n\n<b>Що я вмію:</b>\n• Аналізувати відео з YouTube\n• Відповідати на запитання по відео\n• Створювати короткі версії аналізу\n• Працювати з голосовими повідомленнями\n\n<b>Як працювати:</b>\n1. Надішліть посилання на YouTube відео\n2. Отримайте детальний аналіз\n3. Задавайте питання (текстом або голосом)\n4. Натисніть \"Коротше\" для тез\n\n<b>Формати посилань:</b>\n• youtube.com/watch?v=...\n• youtu.be/...\n• youtube.com/shorts/...\n• youtube.com/live/...",
     },
     "en": {
         "welcome": "Hi! Send me a YouTube video link, and I'll create a detailed analysis (summary) for you.\n\nYou can also change the language in /settings.",
@@ -37,26 +51,35 @@ MESSAGES = {
         "answer_failed": "🚫 <b>Failed to answer the question.</b>\n\nTry again or send a new video.",
         "footer_summary": "\n\n💬 <i>Ask a question about the video or send a new link</i>",
         "footer_answer": "\n\n💬 <i>You can ask more questions or send a new link</i>",
-        "language_name": "ENGLISH",
+        "language_name": "English",
         "settings_title": "⚙️ <b>Settings</b>\n\nChoose your language:",
-        "current_language": "🇺🇸 English",
+        "current_language": "English",
         "language_selected": "✅ Language changed to English",
-        "language_btn_uk": "🇺🇦 Українська",
-        "language_btn_en": "🇺🇸 English",
-        "language_btn_ru": "🇷🇺 Русский",
-        # Analysis headers
+        "language_btn_uk": "UKR",
+        "language_btn_en": "ENG",
+        "language_btn_ru": "RUS",
+        "language_btn_es": "ESP",
         "summary_header": "Main Idea",
         "topics_header": "Key Topics",
         "positions_header": "Participant Positions",
         "arguments_header": "Arguments",
         "conclusions_header": "Practical Conclusions",
+        "btn_shorter": "📝 Shorter",
+        "btn_my_stats": "📊 Stats",
+        "btn_export": "📥 Export",
+        "shorter_processing": "⏳ Creating short version...",
+        "shorter_result": "<b>📝 Short version:</b>\n\n{content}",
+        "kb_settings": "⚙️ Settings",
+        "kb_help": "❓ Help",
+        "kb_stats": "📊 Stats",
+        "help_message": "<b>🎬 YouTube Analyzer</b>\n\n<b>What I can do:</b>\n• Analyze YouTube videos\n• Answer questions about videos\n• Create short summaries\n• Work with voice messages\n\n<b>How to use:</b>\n1. Send a YouTube video link\n2. Get detailed analysis\n3. Ask questions (text or voice)\n4. Click \"Shorter\" for key points\n\n<b>Supported links:</b>\n• youtube.com/watch?v=...\n• youtu.be/...\n• youtube.com/shorts/...\n• youtube.com/live/...",
     },
     "ru": {
         "welcome": "Привет! Отправьте мне ссылку на YouTube видео, и я сделаю для вас детальный анализ (summary).\n\nТакже вы можете изменить язык в /settings.",
         "processing": "🔄 <b>Анализирую видео...</b>",
         "processing_with_title": "🔄 <b>Анализирую видео...</b>\n📺 {title}",
         "no_subtitles": "⚠️ <b>Не удалось получить субтитры.</b>\n\nВозможные причины:\n• Субтитры отключены автором\n• Видео слишком новое\n• Технические ограничения\n\nПопробуйте другое видео с доступными субтитрами.",
-        "ai_error": "🚫 <b>Техническая ошибка</b>\n\nНе удалось обработать видео. Возможно:\n• Видео слишком длинное\n• Сбой AI-модели\n\nПопробуйте повторить запрос через минуту.",
+        "ai_error": "🚫 <b>Техническая ошибка</b>\n\nНе удалось обработить видео. Возможно:\n• Видео слишком длинное\n• Сбой AI-модели\n\nПопробуйте повторить запрос через минуту.",
         "invalid_url": "❌ <b>Невалидная ссылка</b>\n\nОтправьте ссылку на YouTube видео в формате:\n• youtube.com/watch?v=...\n• youtu.be/...",
         "no_context": "🤔 <b>У вас пока нет активного видео для обсуждения.</b>\n\n👇 Сначала отправьте ссылку на YouTube",
         "answer_failed": "🚫 <b>Не удалось ответить на вопрос.</b>\n\nПопробуйте еще раз или отправьте новое видео.",
@@ -64,21 +87,101 @@ MESSAGES = {
         "footer_answer": "\n\n💬 <i>Можете задать еще вопрос или отправить новую ссылку</i>",
         "language_name": "русском",
         "settings_title": "⚙️ <b>Настройки</b>\n\nВыберите ваш язык:",
-        "current_language": "🇷🇺 Русский",
+        "current_language": "Русский",
         "language_selected": "✅ Язык изменен на Русский",
-        "language_btn_uk": "🇺🇦 Українська",
-        "language_btn_en": "🇺🇸 English",
-        "language_btn_ru": "🇷🇺 Русский",
-        # Analysis headers
+        "language_btn_uk": "UKR",
+        "language_btn_en": "ENG",
+        "language_btn_ru": "RUS",
+        "language_btn_es": "ESP",
         "summary_header": "Главная мысль",
         "topics_header": "Ключевые темы",
         "positions_header": "Позиции участников",
         "arguments_header": "Аргументы",
         "conclusions_header": "Практические выводы",
+        "btn_shorter": "📝 Короче",
+        "btn_my_stats": "📊 Статистика",
+        "btn_export": "📥 Экспорт",
+        "shorter_processing": "⏳ Делаю короткую версию...",
+        "shorter_result": "<b>📝 Короткая версия:</b>\n\n{content}",
+        "kb_settings": "⚙️ Настройки",
+        "kb_help": "❓ Помощь",
+        "kb_stats": "📊 Статистика",
+        "help_message": "<b>🎬 YouTube Анализатор</b>\n\n<b>Что я умею:</b>\n• Анализировать видео с YouTube\n• Отвечать на вопросы по видео\n• Создавать краткие версии\n• Работать с голосовыми\n\n<b>Как использовать:</b>\n1. Отправьте ссылку на YouTube\n2. Получите анализ\n3. Задавайте вопросы\n4. Нажмите \"Короче\" для тезисов",
+    },
+    "es": {
+        "welcome": "¡Hola! Envíame un enlace de video de YouTube y crearé un análisis detallado (resumen) para ti.\n\nTambién puedes cambiar el idioma en /settings.",
+        "processing": "🔄 <b>Analizando video...</b>",
+        "processing_with_title": "🔄 <b>Analizando video...</b>\n📺 {title}",
+        "no_subtitles": "⚠️ <b>No se pudieron obtener los subtítulos.</b>\n\nPosibles razones:\n• Subtítulos desactivados por el autor\n• El video es muy nuevo\n• Limitaciones técnicas\n\nPrueba con otro video con subtítulos disponibles.",
+        "ai_error": "🚫 <b>Error técnico</b>\n\nNo se pudo procesar el video. Posiblemente:\n• El video es muy largo\n• Fallo del modelo AI\n\nIntenta de nuevo en un minuto.",
+        "invalid_url": "❌ <b>Enlace inválido</b>\n\nEnvía un enlace de video de YouTube en formato:\n• youtube.com/watch?v=...\n• youtu.be/...",
+        "no_context": "🤔 <b>Aún no tienes un video activo para discutir.</b>\n\n👇 Primero, envía un enlace de YouTube",
+        "answer_failed": "🚫 <b>No se pudo responder la pregunta.</b>\n\nIntenta de nuevo o envía un nuevo video.",
+        "footer_summary": "\n\n💬 <i>Haz una pregunta sobre el video o envía un nuevo enlace</i>",
+        "footer_answer": "\n\n💬 <i>Puedes hacer más preguntas o enviar un nuevo enlace</i>",
+        "language_name": "español",
+        "settings_title": "⚙️ <b>Configuración</b>\n\nElige tu idioma:",
+        "current_language": "Español",
+        "language_selected": "✅ Idioma cambiado a Español",
+        "language_btn_uk": "UKR",
+        "language_btn_en": "ENG",
+        "language_btn_ru": "RUS",
+        "language_btn_es": "ESP",
+        "summary_header": "Idea Principal",
+        "topics_header": "Temas Clave",
+        "positions_header": "Posiciones de Participantes",
+        "arguments_header": "Argumentos",
+        "conclusions_header": "Conclusiones Prácticas",
+        "btn_shorter": "📝 Más corto",
+        "btn_my_stats": "📊 Estadísticas",
+        "btn_export": "📥 Exportar",
+        "shorter_processing": "⏳ Creando versión corta...",
+        "shorter_result": "<b>📝 Versión corta:</b>\n\n{content}",
+        "kb_settings": "⚙️ Ajustes",
+        "kb_help": "❓ Ayuda",
+        "kb_stats": "📊 Estadísticas",
+        "help_message": "<b>🎬 YouTube Analizador</b>\n\n<b>Qué puedo hacer:</b>\n• Analizar videos de YouTube\n• Responder preguntas sobre videos\n• Crear resúmenes cortos\n• Trabajar con mensajes de voz\n\n<b>Cómo usar:</b>\n1. Envía un enlace de YouTube\n2. Recibe un análisis\n3. Haz preguntas\n4. Presiona \"Más corto\" para puntos clave",
     }
 }
 
 DEFAULT_LANG = "uk"
+
+# Mapping from Telegram language codes to our language codes
+TELEGRAM_LANG_MAP = {
+    "uk": "uk",
+    "ru": "ru",
+    "es": "es",
+    "en": "en",
+    # Common variations
+    "uk-UA": "uk",
+    "ru-RU": "ru",
+    "es-ES": "es",
+    "es-MX": "es",
+    "en-US": "en",
+    "en-GB": "en",
+}
+
+
+def detect_language(telegram_lang_code: str | None) -> str:
+    """
+    Detect language from Telegram language code.
+    Falls back to Ukrainian if unknown.
+    """
+    if not telegram_lang_code:
+        return DEFAULT_LANG
+    
+    # Try exact match
+    if telegram_lang_code in TELEGRAM_LANG_MAP:
+        return TELEGRAM_LANG_MAP[telegram_lang_code]
+    
+    # Try prefix match (e.g., "en-AU" -> "en")
+    prefix = telegram_lang_code.split("-")[0].lower()
+    if prefix in TELEGRAM_LANG_MAP:
+        return TELEGRAM_LANG_MAP[prefix]
+    
+    # Default to English for unknown languages (international fallback)
+    return "en"
+
 
 def get_message(key: str, lang: str = DEFAULT_LANG, **kwargs) -> str:
     """Get localized message."""
@@ -88,3 +191,4 @@ def get_message(key: str, lang: str = DEFAULT_LANG, **kwargs) -> str:
     if kwargs:
         return msg.format(**kwargs)
     return msg
+

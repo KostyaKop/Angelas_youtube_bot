@@ -10,6 +10,8 @@ YOUTUBE_PATTERNS = [
     r"(?:https?://)?(?:www\.)?youtu\.be/([a-zA-Z0-9_-]{11})",
     # Shorts URLs
     r"(?:https?://)?(?:www\.)?youtube\.com/shorts/([a-zA-Z0-9_-]{11})",
+    # Live URLs
+    r"(?:https?://)?(?:www\.)?youtube\.com/live/([a-zA-Z0-9_-]{11})",
     # Embed URLs
     r"(?:https?://)?(?:www\.)?youtube\.com/embed/([a-zA-Z0-9_-]{11})",
     # Mobile URLs
@@ -18,7 +20,7 @@ YOUTUBE_PATTERNS = [
 
 # Combined pattern for URL detection
 URL_DETECT_PATTERN = re.compile(
-    r"(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/?"
+    r"(?:https?://)?(?:www\.|m\.)?(?:youtube\.com|youtu\.be)/?(?:watch|shorts|live|embed)?"
 )
 
 

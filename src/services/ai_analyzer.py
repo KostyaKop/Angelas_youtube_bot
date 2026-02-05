@@ -198,3 +198,49 @@ RULES:
         except Exception as e:
             logger.error(f"OpenAI error: {e}")
             return None
+    
+    shorter_prompt_template = """Based on this video summary, create an ultra-concise bullet-point version in {language_name}.
+
+ORIGINAL SUMMARY:
+{summary}
+
+Create a short version with:
+• 1 sentence about the main idea
+• 3-5 key takeaways (one line each)
+
+RULES:
+1. Use ONLY HTML tags: <b>, <i>
+2. Use "• " for bullet points (plain text, not HTML)
+3. FORBIDDEN TAGS: <html>, <body>, <br>, <p>, <div>, <ul>, <ol>, <li>
+4. NO MARKDOWN (*, **, _, __)
+5. Language: {language_name}
+6. Maximum 500 characters
+7. Start DIRECTLY with content, no intro phrases"""
+
+    async def make_shorter(self, context: dict, lang: str = "uk") -> str | None:
+        """Generate a shorter version of the analysis."""
+        from src.utils.locales import get_message
+        
+        prompt = self.shorter_prompt_template.format(
+            summary=context.get("summary", ""),
+            language_name=get_message("language_name", lang)
+        )
+        
+        result = await self._try_gemini(prompt)
+        if result:
+            return result
+        
+        return await self._try_openai(prompt)
+    
+    async def transcribe_audio(self, audio_file_path: str) -> str | None:
+        """Transcribe audio file using OpenAI Whisper."""
+        try:
+            with open(audio_file_path, "rb") as audio_file:
+                transcription = await self.openai_client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file
+                )
+            return transcription.text
+        except Exception as e:
+            logger.error(f"Whisper transcription error: {e}")
+            return None

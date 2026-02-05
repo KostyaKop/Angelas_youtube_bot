@@ -33,10 +33,11 @@ async def show_settings(message: Message, context_store: ContextStore, db: Datab
             InlineKeyboardButton(text=get_message("language_btn_uk", lang), callback_data="set_lang_uk"),
             InlineKeyboardButton(text=get_message("language_btn_en", lang), callback_data="set_lang_en"),
             InlineKeyboardButton(text=get_message("language_btn_ru", lang), callback_data="set_lang_ru"),
+            InlineKeyboardButton(text=get_message("language_btn_es", lang), callback_data="set_lang_es"),
         ],
         [
-            InlineKeyboardButton(text="📊 Моя статистика", callback_data="my_stats"),
-            InlineKeyboardButton(text="📥 Експорт історії", callback_data="export_history"),
+            InlineKeyboardButton(text=get_message("btn_my_stats", lang), callback_data="my_stats"),
+            InlineKeyboardButton(text=get_message("btn_export", lang), callback_data="export_history"),
         ]
     ])
     

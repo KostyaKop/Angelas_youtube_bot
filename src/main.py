@@ -9,7 +9,7 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from src.config import config
-from src.handlers import commands, youtube, followup, settings, admin
+from src.handlers import commands, youtube, followup, settings, admin, voice
 from src.services.context_store import ContextStore
 from src.services.ai_analyzer import AIAnalyzer
 from src.services.youtube import YouTubeService
@@ -66,6 +66,7 @@ async def main():
     dp.include_router(settings.router)
     dp.include_router(commands.router)
     dp.include_router(youtube.router)
+    dp.include_router(voice.router)  # Voice messages before followup
     dp.include_router(followup.router)
     
     # Start polling

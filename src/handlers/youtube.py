@@ -4,7 +4,7 @@ import logging
 from datetime import datetime
 
 from aiogram import Router, F
-from aiogram.types import Message
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 from src.services.youtube import YouTubeService
 from src.services.ai_analyzer import AIAnalyzer
@@ -145,8 +145,17 @@ async def handle_youtube_url(
         full_response = header + summary + get_message("footer_summary", lang)
         
         chunks = split_message(full_response)
-        for chunk in chunks:
-            await message.answer(chunk)
+        
+        # Add "Shorter" button on the last chunk
+        shorter_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text=get_message("btn_shorter", lang), callback_data=f"shorter_{video_id}")]
+        ])
+        
+        for i, chunk in enumerate(chunks):
+            if i == len(chunks) - 1:  # Last chunk
+                await message.answer(chunk, reply_markup=shorter_keyboard)
+            else:
+                await message.answer(chunk)
         
         # Save context to Redis
         await context_store.save(user_id, {
@@ -194,3 +203,32 @@ async def handle_youtube_url(
             except Exception:
                 pass
 
+
+@router.callback_query(F.data.startswith("shorter_"))
+async def handle_shorter(
+    callback: CallbackQuery,
+    context_store: ContextStore,
+    ai_analyzer: AIAnalyzer,
+) -> None:
+    """Generate a shorter version of the video analysis."""
+    user_id = callback.from_user.id
+    video_id = callback.data.split("_", 1)[1]
+    
+    lang = await context_store.get_language(user_id)
+    
+    # Get context from Redis
+    context = await context_store.get(user_id)
+    if not context or context.get("video_id") != video_id:
+        await callback.answer("Контекст застарів, надішліть відео знову")
+        return
+    
+    await callback.answer(get_message("shorter_processing", lang))
+    
+    # Generate shorter version
+    shorter = await ai_analyzer.make_shorter(context, lang)
+    
+    if shorter:
+        result = get_message("shorter_result", lang, content=shorter)
+        await callback.message.answer(result)
+    else:
+        await callback.answer("Не вдалось створити коротку версію")
