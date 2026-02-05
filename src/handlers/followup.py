@@ -26,6 +26,8 @@ ERROR_ANSWER_FAILED = """
 """.strip()
 
 
+from src.utils.locales import get_message
+
 @router.message()
 async def handle_followup(
     message: Message,
@@ -48,10 +50,13 @@ async def handle_followup(
     if not question.strip():
         return
     
+    # Get user language
+    lang = await context_store.get_language(user_id)
+    
     # Get context from Redis
     context = await context_store.get(user_id)
     if not context:
-        await message.answer(ERROR_NO_CONTEXT)
+        await message.answer(get_message("no_context", lang))
         return
     
     # Send typing indicator
@@ -59,13 +64,13 @@ async def handle_followup(
     
     try:
         # Get AI answer with context
-        answer = await ai_analyzer.answer_followup(context, question)
+        answer = await ai_analyzer.answer_followup(context, question, lang=lang)
         if not answer:
-            await message.answer(ERROR_ANSWER_FAILED)
+            await message.answer(get_message("answer_failed", lang))
             return
         
         # Format response
-        full_response = answer + "\n\n💬 <i>Можете задати ще питання або надіслати нове посилання</i>"
+        full_response = answer + get_message("footer_answer", lang)
         
         # Send answer (split if too long)
         chunks = split_message(full_response)
@@ -76,4 +81,4 @@ async def handle_followup(
         
     except Exception as e:
         logger.error(f"Error answering followup: {e}")
-        await message.answer(ERROR_ANSWER_FAILED)
+        await message.answer(get_message("answer_failed", lang))

@@ -116,6 +116,27 @@ class ContextStore:
         except Exception as e:
             logger.error(f"Failed to check context for user {user_id}: {e}")
             return False
+
+    async def set_language(self, user_id: int, lang_code: str) -> None:
+        """Save user language preference."""
+        try:
+            client = await self._get_client()
+            key = f"user_settings:{user_id}"
+            # Settings persist longer (e.g. 30 days)
+            await client.setex(key, 2592000, lang_code) 
+        except Exception as e:
+            logger.error(f"Failed to set language for user {user_id}: {e}")
+
+    async def get_language(self, user_id: int) -> str:
+        """Get user language preference (default: uk)."""
+        try:
+            client = await self._get_client()
+            key = f"user_settings:{user_id}"
+            lang = await client.get(key)
+            return lang if lang else "uk"
+        except Exception as e:
+            logger.error(f"Failed to get language for user {user_id}: {e}")
+            return "uk"
     
     async def close(self) -> None:
         """Close Redis connection."""

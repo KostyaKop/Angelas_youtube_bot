@@ -13,7 +13,7 @@ class AIAnalyzer:
     
     # Analysis prompt template
     analysis_prompt_template = """ROLE: Senior Research Analyst
-TASK: Create comprehensive video analysis in RUSSIAN
+TASK: Create comprehensive video analysis in {language_name}
 
 VIDEO TITLE: {title}
 TRANSCRIPT WITH TIMESTAMPS:
@@ -21,33 +21,33 @@ TRANSCRIPT WITH TIMESTAMPS:
 
 OUTPUT FORMAT (STRICT TELEGRAM HTML):
 
-<b>🎯 Головна думка</b>
-[2-3 речення суть]
+<b>🎯 {summary_header}</b>
+[2-3 sentences with the main idea]
 
-<b>📌 Ключові теми</b>
-• <b>Тема 1</b>: пояснення [12:34]
-• <b>Тема 2</b>: пояснення [18:45]
+<b>📌 {topics_header}</b>
+• <b>Topic 1</b>: explanation [12:34]
+• <b>Topic 2</b>: explanation [18:45]
 
-<b>👤 Позиції учасників</b>
-• <b>Ім'я/Роль</b>: позиція з аргументами [05:20]
+<b>👤 {positions_header}</b>
+• <b>Name/Role</b>: position with arguments [05:20]
 
-<b>⚖️ Аргументи</b>
-• <b>Тезис</b> — за: ... [15:30] / проти: ... [16:45]
+<b>⚖️ {arguments_header}</b>
+• <b>Thesis</b> — for: ... [15:30] / against: ... [16:45]
 
-<b>💡 Практичні висновки</b>
-• Вивід 1 [30:15]
-• Вивід 2 [32:40]
+<b>💡 {conclusions_header}</b>
+• Conclusion 1 [30:15]
+• Conclusion 2 [32:40]
 
 CRITICAL RULES:
-1. Додавай тайм-код [MM:SS] після КОЖНОЇ тези
+1. Add timestamp [MM:SS] after EACH thesis
 2. Use ONLY HTML tags: <b>, <i>
 3. DO NOT use <ul>, <ol>, <li>, <u>, <code>, <br>, <p>, <div>
 4. Use "• " for bullet points
 5. NEVER USE MARKDOWN (*, _, **, ```)
-6. Мова: російська
-7. Детальний розбір (не стислий)
+6. Language: {language_name} (write ALL text in this language)
+7. Detailed analysis (not brief)
 8. NO intro phrases like "Here is...", "Вот анализ..."
-9. Наводь конкретні приклади та цитати з відео"""
+9. Provide specific examples and quotes from the video"""
 
     followup_prompt_template = """CONTEXT:
 Video Title: {title}
@@ -56,7 +56,7 @@ Full Transcript: {transcript}
 
 USER QUESTION: {question}
 
-Provide a detailed answer in RUSSIAN using the video context.
+Provide a detailed answer in {language_name} using the video context.
 Include relevant timestamps [MM:SS] when referencing specific parts.
 
 RULES:
@@ -65,7 +65,8 @@ RULES:
 3. Use "• " for bullet points
 4. NEVER USE MARKDOWN
 5. Answer directly, no intro phrases
-6. Reference specific parts with timestamps"""
+6. Reference specific parts with timestamps
+7. Language: {language_name} (write ALL text in this language)"""
 
     # ... (init method follows)
 
@@ -78,18 +79,39 @@ RULES:
         # Configure OpenAI
         self.openai_client = AsyncOpenAI(api_key=openai_api_key)
     
-    async def analyze_video(self, title: str, transcript: str) -> str | None:
+    async def analyze_video(self, title: str, transcript: str, lang: str = "uk") -> str | None:
         """
         Analyze video transcript and generate summary.
         Uses Gemini as primary, OpenAI as fallback.
         """
-        prompt = self.analysis_prompt_template.format(title=title, transcript=transcript)
+        # Get localized prompt parameters
+        from src.utils.locales import get_message
+        
+        prompt = self.analysis_prompt_template.format(
+            title=title,
+            transcript=transcript,
+            language_name=get_message("language_name", lang),
+            summary_header=get_message("summary_header", lang),
+            topics_header=get_message("topics_header", lang),
+            positions_header=get_message("positions_header", lang),
+            arguments_header=get_message("arguments_header", lang),
+            conclusions_header=get_message("conclusions_header", lang)
+        )
         
         # Truncate transcript if too long (for token limits)
         if len(prompt) > 100000:
             # Keep first ~80% of transcript
             truncated_transcript = transcript[:int(len(transcript) * 0.8)]
-            prompt = self.analysis_prompt_template.format(title=title, transcript=truncated_transcript)
+            prompt = self.analysis_prompt_template.format(
+                title=title,
+                transcript=truncated_transcript,
+                language_name=get_message("language_name", lang),
+                summary_header=get_message("summary_header", lang),
+                topics_header=get_message("topics_header", lang),
+                positions_header=get_message("positions_header", lang),
+                arguments_header=get_message("arguments_header", lang),
+                conclusions_header=get_message("conclusions_header", lang)
+            )
             logger.warning(f"Truncated transcript for analysis (original: {len(transcript)} chars)")
         
         # Try Gemini first
@@ -108,15 +130,18 @@ RULES:
         logger.error("Both AI providers failed")
         return None
     
-    async def answer_followup(self, context: dict, question: str) -> str | None:
+    async def answer_followup(self, context: dict, question: str, lang: str = "uk") -> str | None:
         """
         Answer followup question using stored context.
         """
+        from src.utils.locales import get_message
+        
         prompt = self.followup_prompt_template.format(
             title=context.get("video_title", ""),
             summary=context.get("summary", ""),
             transcript=context.get("transcript", ""),
-            question=question
+            question=question,
+            language_name=get_message("language_name", lang)
         )
         
         # Truncate if needed
@@ -127,7 +152,8 @@ RULES:
                 title=context.get("video_title", ""),
                 summary=context.get("summary", ""),
                 transcript=reduced_transcript,
-                question=question
+                question=question,
+                language_name=get_message("language_name", lang)
             )
         
         # Try Gemini first

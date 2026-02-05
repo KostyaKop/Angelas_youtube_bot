@@ -7,3 +7,5 @@ gspread==6.0.2
 google-auth==2.27.0
 python-dotenv==1.0.1
 aiohttp==3.9.3
+apify-client>=1.6.0
+aiosqlite>=0.19.0

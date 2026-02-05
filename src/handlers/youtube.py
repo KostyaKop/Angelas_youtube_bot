@@ -10,8 +10,10 @@ from src.services.youtube import YouTubeService
 from src.services.ai_analyzer import AIAnalyzer
 from src.services.context_store import ContextStore
 from src.services.sheets_logger import SheetsLogger
+from src.services.database import DatabaseService
 from src.utils.validators import is_youtube_url, extract_video_id
 from src.utils.chunker import split_message
+from src.utils.locales import get_message
 
 router = Router()
 logger = logging.getLogger(__name__)
@@ -45,6 +47,21 @@ ERROR_INVALID_URL = """
 • youtu.be/...
 """.strip()
 
+ERROR_NO_CREDITS = """
+💰 <b>Закінчились кредити</b>
+
+На вашому рахунку немає кредитів для обробки відео.
+Перегляньте свою статистику: /mystats
+""".strip()
+
+ERROR_BLOCKED = """
+🚫 <b>Доступ заблоковано</b>
+
+Ваш обліковий запис заблоковано.
+""".strip()
+
+
+from src.config import Config
 
 @router.message(F.text.func(is_youtube_url))
 async def handle_youtube_url(
@@ -53,6 +70,8 @@ async def handle_youtube_url(
     ai_analyzer: AIAnalyzer,
     context_store: ContextStore,
     sheets_logger: SheetsLogger,
+    db: DatabaseService,
+    config: Config,
 ) -> None:
     """Process YouTube URL and generate analysis."""
     
@@ -60,36 +79,60 @@ async def handle_youtube_url(
     username = message.from_user.username or message.from_user.full_name
     url = message.text.strip()
     
-    # Extract video ID
-    video_id = extract_video_id(url)
-    if not video_id:
-        await message.answer(ERROR_INVALID_URL)
+    # Get user language
+    lang = await context_store.get_language(user_id)
+    
+    # Ensure user exists in database
+    user = await db.get_or_create_user(
+        user_id,
+        message.from_user.username,
+        message.from_user.first_name
+    )
+    
+    # Check if user is blocked
+    if user.is_blocked:
+        await message.answer(ERROR_BLOCKED)
         return
     
-    # Send processing indicator
-    processing_msg = await message.answer("🔄 <b>Аналізую відео...</b>")
+    # Check credits
+    has_credits, remaining = await db.check_credits(user_id)
+    if not has_credits:
+        await message.answer(ERROR_NO_CREDITS)
+        return
     
     try:
+        # Extract video ID
+        video_id = extract_video_id(url)
+        if not video_id:
+            await message.answer(get_message("invalid_url", lang))
+            return
+        
+        # Send processing indicator
+        processing_msg = await message.answer(get_message("processing", lang))
+        
         # Get video info
         video_info = await youtube_service.get_video_info(video_id)
         title = video_info.get("title", "Untitled Video") if video_info else "Untitled Video"
         
-        await processing_msg.edit_text(f"🔄 <b>Аналізую відео...</b>\n📺 {title}")
+        await processing_msg.edit_text(get_message("processing_with_title", lang, title=title))
         
         # Get transcript
         transcript = await youtube_service.get_transcript(video_id)
         if not transcript:
-            await processing_msg.edit_text(ERROR_NO_SUBTITLES)
+            await processing_msg.edit_text(get_message("no_subtitles", lang))
             return
         
         # Format transcript with timestamps
         formatted_transcript = youtube_service.format_transcript_with_timestamps(transcript)
         
         # Analyze with AI
-        summary = await ai_analyzer.analyze_video(title, formatted_transcript)
+        summary = await ai_analyzer.analyze_video(title, formatted_transcript, lang=lang)
         if not summary:
-            await processing_msg.edit_text(ERROR_AI_FAILED)
+            await processing_msg.edit_text(get_message("ai_error", lang))
             return
+        
+        # Use credit and log to database
+        await db.use_credit(user_id, video_id, title, url)
         
         # Delete processing message
         try:
@@ -99,7 +142,7 @@ async def handle_youtube_url(
         
         # Send summary (split if too long)
         header = f"<b>📺 {title}</b>\n\n"
-        full_response = header + summary + "\n\n💬 <i>Задайте питання по відео або надішліть нове посилання</i>"
+        full_response = header + summary + get_message("footer_summary", lang)
         
         chunks = split_message(full_response)
         for chunk in chunks:
@@ -115,7 +158,7 @@ async def handle_youtube_url(
             "created_at": datetime.utcnow().isoformat(),
         })
         
-        # Log to Google Sheets
+        # Log to Google Sheets (still used for admin logging)
         summary_preview = summary[:200] + "..." if len(summary) > 200 else summary
         await sheets_logger.log_request(
             user_id=user_id,
@@ -127,9 +170,27 @@ async def handle_youtube_url(
         
         logger.info(f"Processed video {video_id} for user {user_id}")
         
+        # Admin Notification (Success)
+        if config.admin_user_id:
+            try:
+                credits_info = f"💰 Залишилось: {remaining - 1}" if remaining > 0 else "⭐ Premium"
+                msg = f"✅ <b>Нове відео оброблено</b>\n\n👤 Користувач: {username} (`{user_id}`)\n📺 Відео: {title}\n🔗 {url}\n{credits_info}"
+                await message.bot.send_message(config.admin_user_id, msg)
+            except Exception as e:
+                logger.error(f"Failed to send admin notification: {e}")
+
     except Exception as e:
         logger.error(f"Error processing video: {e}")
         try:
-            await processing_msg.edit_text(ERROR_AI_FAILED)
+            await processing_msg.edit_text(get_message("ai_error", lang))
         except Exception:
-            await message.answer(ERROR_AI_FAILED)
+            await message.answer(get_message("ai_error", lang))
+        
+        # Admin Notification (Error)
+        if config.admin_user_id:
+            try:
+                msg = f"❌ <b>Помилка обробки</b>\n\n👤 Користувач: {username} (`{user_id}`)\n🔗 {url}\n\n⚠️ Помилка: {str(e)}"
+                await message.bot.send_message(config.admin_user_id, msg)
+            except Exception:
+                pass
+

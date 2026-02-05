@@ -9,11 +9,12 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 
 from src.config import config
-from src.handlers import commands, youtube, followup
+from src.handlers import commands, youtube, followup, settings, admin
 from src.services.context_store import ContextStore
 from src.services.ai_analyzer import AIAnalyzer
 from src.services.youtube import YouTubeService
 from src.services.sheets_logger import SheetsLogger
+from src.services.database import DatabaseService
 
 # Configure logging
 logging.basicConfig(
@@ -38,6 +39,10 @@ async def main():
     youtube_service = YouTubeService(config.apify_api_key)
     ai_analyzer = AIAnalyzer(config.gemini_api_key, config.openai_api_key)
     sheets_logger = SheetsLogger(config.google_sheets_id, config.google_service_account)
+    db = DatabaseService()  # SQLite database for users
+    
+    # Initialize database
+    await db.initialize()
     
     # Initialize bot
     bot = Bot(
@@ -53,9 +58,12 @@ async def main():
     dp["youtube_service"] = youtube_service
     dp["ai_analyzer"] = ai_analyzer
     dp["sheets_logger"] = sheets_logger
+    dp["db"] = db
     dp["config"] = config
     
-    # Register handlers
+    # Register handlers (order matters - admin first for /admin command)
+    dp.include_router(admin.router)
+    dp.include_router(settings.router)
     dp.include_router(commands.router)
     dp.include_router(youtube.router)
     dp.include_router(followup.router)
@@ -72,3 +80,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
