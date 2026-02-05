@@ -26,6 +26,9 @@ class Config:
     google_sheets_id: str
     google_service_account: dict
     
+    # Apify
+    apify_api_key: str
+    
     # Optional
     admin_user_id: int | None = None
     
@@ -55,6 +58,7 @@ class Config:
             upstash_redis_url=os.getenv("UPSTASH_REDIS_URL", ""),
             google_sheets_id=os.getenv("GOOGLE_SHEETS_ID", ""),
             google_service_account=google_service_account,
+            apify_api_key=os.getenv("APIFY_API_KEY", ""),
             admin_user_id=admin_user_id,
         )
     
@@ -69,6 +73,8 @@ class Config:
             missing.append("OPENAI_API_KEY")
         if not self.upstash_redis_url:
             missing.append("UPSTASH_REDIS_URL")
+        if not self.apify_api_key:
+            missing.append("APIFY_API_KEY")
         return missing
 
 

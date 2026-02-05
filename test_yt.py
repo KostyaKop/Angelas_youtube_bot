@@ -8,4 +8,7 @@ try:
     print("Success! Transcript found.")
     print(transcript[:2])
 except Exception as e:
-    print(f"Error: {e}")
+    import traceback
+    print(f"Error type: {type(e)}")
+    print(f"Error message: {e}")
+    traceback.print_exc()
