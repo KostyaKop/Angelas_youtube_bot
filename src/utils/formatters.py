@@ -46,41 +46,44 @@ def clean_text_for_telegram(text: str) -> str:
     Sanitize text for Telegram HTML format.
     
     1. Removes unsupported tags like <br>, <div>, <p>
-    2. Closes unclosed tags
-    3. Converts Markdown shortcuts to HTML
+    2. Converts lists (<ul>, <ol>, <li>) to bullet points
+    3. Closes unclosed tags
+    4. Converts Markdown shortcuts to HTML
     """
     if not text:
         return ""
 
     # 1. Remove unsupported block tags, replacing them with newlines if needed
-    for tag in ["<br>", "<br/>", "<br />", "<p>", "<div>"]:
+    for tag in ["<br>", "<br/>", "<br />", "<p>", "<div>", "<h1>", "<h2>", "<h3>"]:
         text = text.replace(tag, "\n")
     
-    for tag in ["</p>", "</div>", "<html>", "</html>", "<body>", "</body>"]:
+    # 2. Handle lists - convert <li> to bullet points
+    text = text.replace("<li>", "• ")
+    
+    # 3. Strip closing tags and container tags
+    for tag in ["</p>", "</div>", "<html>", "</html>", "<body>", "</body>", 
+                "<ul>", "</ul>", "<ol>", "</ol>", "</li>", "</h1>", "</h2>", "</h3>"]:
         text = text.replace(tag, "")
+        
+    # 4. Remove tags we explicitly don't want (underlines, code blocks if AI ignored instructions)
+    # We want to keep <b>, <i>, <a>, but remove others.
+    # Simple strip for <u> and <code>
+    text = text.replace("<u>", "").replace("</u>", "")
+    text = text.replace("<code>", "").replace("</code>", "")
 
-    # 2. Convert common Markdown to HTML
+    # 5. Convert common Markdown to HTML
     # Bold
     text = re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", text)
     # Italic
     text = re.sub(r"\*(.+?)\*", r"<i>\1</i>", text)
-    # Code
-    text = re.sub(r"`(.+?)`", r"<code>\1</code>", text)
+    # Code - if any left in markdown format, strip backticks
+    text = re.sub(r"`(.+?)`", r"\1", text)
     
-    # 3. Final cleanup of potential double headers or markdown artifacts
+    # 6. Final cleanup
     text = text.replace("###", "").replace("##", "")
     
-    # 4. Remove any other tags that are NOT supported by Telegram
-    # Telegram only supports: b, strong, i, em, u, ins, s, strike, del, a, code, pre
-    # We will use a regex to look for tags and escape them if they aren't allowed
-    
-    # BUT easier hack: let's just ensure we don't have broken tags.
-    # The error "Unexpected end tag" usually means we have something like </b> without <b>.
-    
-    # Simple stack-based balancer (conceptually) or just strict replacement.
-    # Given the complexity, let's strip ALL tags except the ones we explicitly want.
-    # Actually, a safer approach for this specific bug (Unexpected end tag) is 
-    # to catch the specific error in the handler, but let's try to fix the string first.
+    # Remove multiple newlines
+    text = re.sub(r"\n{3,}", "\n\n", text)
     
     return text.strip()
 

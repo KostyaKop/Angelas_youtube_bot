@@ -12,7 +12,7 @@ class AIAnalyzer:
     """AI service for video analysis with fallback support."""
     
     # Analysis prompt template
-    ANALYSIS_PROMPT = """ROLE: Senior Research Analyst
+    analysis_prompt_template = """ROLE: Senior Research Analyst
 TASK: Create comprehensive video analysis in RUSSIAN
 
 VIDEO TITLE: {title}
@@ -40,16 +40,16 @@ OUTPUT FORMAT (STRICT TELEGRAM HTML):
 
 CRITICAL RULES:
 1. Додавай тайм-код [MM:SS] після КОЖНОЇ тези
-2. Use ONLY HTML tags: <b>, <i>, <u>, <code>
-3. NEVER USE MARKDOWN (*, _, **, ```)
-4. Мова: російська
-5. Детальний розбір (не стислий)
-6. Якщо дискусія — показати обидві сторони з їх аргументами
-7. NO intro phrases like "Here is...", "Вот анализ..."
-8. Наводь конкретні приклади та цитати з відео"""
+2. Use ONLY HTML tags: <b>, <i>
+3. DO NOT use <ul>, <ol>, <li>, <u>, <code>, <br>, <p>, <div>
+4. Use "• " for bullet points
+5. NEVER USE MARKDOWN (*, _, **, ```)
+6. Мова: російська
+7. Детальний розбір (не стислий)
+8. NO intro phrases like "Here is...", "Вот анализ..."
+9. Наводь конкретні приклади та цитати з відео"""
 
-    # Followup prompt template
-    FOLLOWUP_PROMPT = """CONTEXT:
+    followup_prompt_template = """CONTEXT:
 Video Title: {title}
 Previous Summary: {summary}
 Full Transcript: {transcript}
@@ -60,10 +60,14 @@ Provide a detailed answer in RUSSIAN using the video context.
 Include relevant timestamps [MM:SS] when referencing specific parts.
 
 RULES:
-1. Use ONLY HTML tags: <b>, <i>, <u>, <code>
-2. NEVER USE MARKDOWN
-3. Answer directly, no intro phrases
-4. Reference specific parts with timestamps"""
+1. Use ONLY HTML tags: <b>, <i>
+2. DO NOT use <ul>, <ol>, <li>, <u>, <code>
+3. Use "• " for bullet points
+4. NEVER USE MARKDOWN
+5. Answer directly, no intro phrases
+6. Reference specific parts with timestamps"""
+
+    # ... (init method follows)
 
     def __init__(self, gemini_api_key: str, openai_api_key: str):
         """Initialize AI clients."""
@@ -79,13 +83,13 @@ RULES:
         Analyze video transcript and generate summary.
         Uses Gemini as primary, OpenAI as fallback.
         """
-        prompt = self.ANALYSIS_PROMPT.format(title=title, transcript=transcript)
+        prompt = self.analysis_prompt_template.format(title=title, transcript=transcript)
         
         # Truncate transcript if too long (for token limits)
         if len(prompt) > 100000:
             # Keep first ~80% of transcript
             truncated_transcript = transcript[:int(len(transcript) * 0.8)]
-            prompt = self.ANALYSIS_PROMPT.format(title=title, transcript=truncated_transcript)
+            prompt = self.analysis_prompt_template.format(title=title, transcript=truncated_transcript)
             logger.warning(f"Truncated transcript for analysis (original: {len(transcript)} chars)")
         
         # Try Gemini first
@@ -108,7 +112,7 @@ RULES:
         """
         Answer followup question using stored context.
         """
-        prompt = self.FOLLOWUP_PROMPT.format(
+        prompt = self.followup_prompt_template.format(
             title=context.get("video_title", ""),
             summary=context.get("summary", ""),
             transcript=context.get("transcript", ""),
@@ -119,7 +123,7 @@ RULES:
         if len(prompt) > 100000:
             # Reduce transcript in context
             reduced_transcript = context.get("transcript", "")[:50000]
-            prompt = self.FOLLOWUP_PROMPT.format(
+            prompt = self.followup_prompt_template.format(
                 title=context.get("video_title", ""),
                 summary=context.get("summary", ""),
                 transcript=reduced_transcript,
