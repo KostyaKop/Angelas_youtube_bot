@@ -39,6 +39,13 @@ async def main():
     youtube_service = YouTubeService(config.apify_api_key)
     ai_analyzer = AIAnalyzer(config.gemini_api_key, config.openai_api_key)
     sheets_logger = SheetsLogger(config.google_sheets_id, config.google_service_account)
+    
+    # Log database connection info for debugging
+    if "postgresql" in config.database_url or "postgres" in config.database_url:
+        logger.info(f"🐘 Using PostgreSQL database")
+    else:
+        logger.warning(f"⚠️ Using SQLite (local file). Set DATABASE_URL for PostgreSQL.")
+    
     db = DatabaseService(config.database_url)
     
     # Initialize database
