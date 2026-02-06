@@ -29,6 +29,9 @@ class Config:
     # Apify
     apify_api_key: str
     
+    # Database
+    database_url: str
+    
     # Optional
     admin_user_id: int | None = None
     
@@ -51,6 +54,13 @@ class Config:
         admin_id_str = os.getenv("ADMIN_USER_ID")
         admin_user_id = int(admin_id_str) if admin_id_str else None
         
+        # Database URL handling (Railway provides postgres://, we need postgresql+asyncpg://)
+        db_url = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///data/bot.db")
+        if db_url.startswith("postgres://"):
+            db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+        elif db_url.startswith("postgresql://"):
+            db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+            
         return cls(
             telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN", ""),
             gemini_api_key=os.getenv("GEMINI_API_KEY", ""),
@@ -59,6 +69,7 @@ class Config:
             google_sheets_id=os.getenv("GOOGLE_SHEETS_ID", ""),
             google_service_account=google_service_account,
             apify_api_key=os.getenv("APIFY_API_KEY", ""),
+            database_url=db_url,
             admin_user_id=admin_user_id,
         )
     

@@ -39,7 +39,7 @@ async def main():
     youtube_service = YouTubeService(config.apify_api_key)
     ai_analyzer = AIAnalyzer(config.gemini_api_key, config.openai_api_key)
     sheets_logger = SheetsLogger(config.google_sheets_id, config.google_service_account)
-    db = DatabaseService()  # SQLite database for users
+    db = DatabaseService(config.database_url)
     
     # Initialize database
     await db.initialize()
