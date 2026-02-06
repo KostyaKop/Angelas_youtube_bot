@@ -64,7 +64,16 @@ async def handle_youtube_url(
         # Extract video ID
         video_id = extract_video_id(url)
         if not video_id:
+            logger.warning(f"Failed to extract video ID from: {url}")
             await message.answer(get_message("invalid_url", lang))
+            if config.admin_user_id:
+                try:
+                    await message.bot.send_message(
+                        config.admin_user_id, 
+                        f"⚠️ <b>Невдала спроба (URL)</b>\n👤 {username}\n🔗 {url}\n❌ Невірне посилання"
+                    )
+                except Exception:
+                    pass
             return
         
         # Send processing indicator
@@ -80,6 +89,14 @@ async def handle_youtube_url(
         transcript = await youtube_service.get_transcript(video_id)
         if not transcript:
             await processing_msg.edit_text(get_message("no_subtitles", lang))
+            if config.admin_user_id:
+                try:
+                    await message.bot.send_message(
+                        config.admin_user_id, 
+                        f"⚠️ <b>Невдала спроба (Субтитри)</b>\n👤 {username}\n📺 {title}\n🔗 {url}\n❌ Немає субтитрів"
+                    )
+                except Exception:
+                    pass
             return
         
         # Format transcript with timestamps
