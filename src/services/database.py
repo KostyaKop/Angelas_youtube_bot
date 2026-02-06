@@ -94,7 +94,7 @@ class DatabaseService:
                 result = await session.execute(
                     select(User).where(User.user_id == user_id)
                 )
-                user = result.scalar_one_none()
+                user = result.scalars().first()
                 
                 if user:
                     user.username = username or user.username
@@ -153,7 +153,7 @@ class DatabaseService:
                 result = await session.execute(
                     select(User).where(User.user_id == user_id)
                 )
-                user = result.scalar_one_none()
+                user = result.scalars().first()
                 
                 if not user or user.is_blocked:
                     return False
@@ -183,7 +183,7 @@ class DatabaseService:
             result = await session.execute(
                 select(User).where(User.user_id == user_id)
             )
-            user = result.scalar_one_none()
+            user = result.scalars().first()
             
             if not user:
                 return {}
