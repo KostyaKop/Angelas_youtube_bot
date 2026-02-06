@@ -37,6 +37,16 @@ MESSAGES = {
         "kb_settings": "⚙️ Налаштування",
         "kb_help": "❓ Допомога",
         "kb_stats": "📊 Статистика",
+        # Errors
+        "error_no_credits": "💰 <b>Закінчились кредити</b>\n\nНа вашому рахунку немає кредитів для обробки відео.\nПерегляньте свою статистику: /mystats",
+        "error_blocked": "🚫 <b>Доступ заблоковано</b>\n\nВаш обліковий запис заблоковано.",
+        "error_context_expired": "Контекст застарів, надішліть відео знову",
+        "error_shorter_failed": "Не вдалось створити коротку версію",
+        # Voice
+        "voice_processing": "🎤 Обробляю голосове повідомлення...",
+        "voice_failed_recognition": "❌ Не вдалося розпізнати голосове повідомлення",
+        "voice_question_transcribed": "🎤 <i>Питання:</i> {text}\n\n⏳ Аналізую...",
+        "voice_error": "❌ Помилка обробки голосового повідомлення",
         # Help message
         "help_message": "<b>🎬 YouTube Аналізатор</b>\n\n<b>Що я вмію:</b>\n• Аналізувати відео з YouTube\n• Відповідати на запитання по відео\n• Створювати короткі версії аналізу\n• Працювати з голосовими повідомленнями\n\n<b>Як працювати:</b>\n1. Надішліть посилання на YouTube відео\n2. Отримайте детальний аналіз\n3. Задавайте питання (текстом або голосом)\n4. Натисніть \"Коротше\" для тез\n\n<b>Формати посилань:</b>\n• youtube.com/watch?v=...\n• youtu.be/...\n• youtube.com/shorts/...\n• youtube.com/live/...",
     },
@@ -72,6 +82,16 @@ MESSAGES = {
         "kb_settings": "⚙️ Settings",
         "kb_help": "❓ Help",
         "kb_stats": "📊 Stats",
+        # Errors
+        "error_no_credits": "💰 <b>Out of credits</b>\n\nYou have no credits left to process videos.\nCheck your stats: /mystats",
+        "error_blocked": "🚫 <b>Access denied</b>\n\nYour account is blocked.",
+        "error_context_expired": "Context expired, please send the video again",
+        "error_shorter_failed": "Failed to create short version",
+        # Voice
+        "voice_processing": "🎤 Processing voice message...",
+        "voice_failed_recognition": "❌ Failed to recognize voice message",
+        "voice_question_transcribed": "🎤 <i>Question:</i> {text}\n\n⏳ Analyzing...",
+        "voice_error": "❌ Error processing voice message",
         "help_message": "<b>🎬 YouTube Analyzer</b>\n\n<b>What I can do:</b>\n• Analyze YouTube videos\n• Answer questions about videos\n• Create short summaries\n• Work with voice messages\n\n<b>How to use:</b>\n1. Send a YouTube video link\n2. Get detailed analysis\n3. Ask questions (text or voice)\n4. Click \"Shorter\" for key points\n\n<b>Supported links:</b>\n• youtube.com/watch?v=...\n• youtu.be/...\n• youtube.com/shorts/...\n• youtube.com/live/...",
     },
     "ru": {
@@ -106,6 +126,16 @@ MESSAGES = {
         "kb_settings": "⚙️ Настройки",
         "kb_help": "❓ Помощь",
         "kb_stats": "📊 Статистика",
+        # Errors
+        "error_no_credits": "💰 <b>Закончились кредиты</b>\n\nНа вашем счету нет кредитов для обработки видео.\nПроверьте свою статистику: /mystats",
+        "error_blocked": "🚫 <b>Доступ заблокирован</b>\n\nВаш аккаунт заблокирован.",
+        "error_context_expired": "Контекст устарел, отправьте видео снова",
+        "error_shorter_failed": "Не удалось создать краткую версию",
+        # Voice
+        "voice_processing": "🎤 Обрабатываю голосовое сообщение...",
+        "voice_failed_recognition": "❌ Не удалось распознать голосовое сообщени",
+        "voice_question_transcribed": "🎤 <i>Вопрос:</i> {text}\n\n⏳ Анализирую...",
+        "voice_error": "❌ Ошибка обработки голосового сообщения",
         "help_message": "<b>🎬 YouTube Анализатор</b>\n\n<b>Что я умею:</b>\n• Анализировать видео с YouTube\n• Отвечать на вопросы по видео\n• Создавать краткие версии\n• Работать с голосовыми\n\n<b>Как использовать:</b>\n1. Отправьте ссылку на YouTube\n2. Получите анализ\n3. Задавайте вопросы\n4. Нажмите \"Короче\" для тезисов",
     },
     "es": {
@@ -140,6 +170,16 @@ MESSAGES = {
         "kb_settings": "⚙️ Ajustes",
         "kb_help": "❓ Ayuda",
         "kb_stats": "📊 Estadísticas",
+        # Errors
+        "error_no_credits": "💰 <b>Sin créditos</b>\n\nNo tienes créditos para procesar videos.\nRevisa tus estadísticas: /mystats",
+        "error_blocked": "🚫 <b>Acceso bloqueado</b>\n\nTu cuenta está bloqueada.",
+        "error_context_expired": "Contexto expirado, envía el video nuevamente",
+        "error_shorter_failed": "No se pudo crear la versión corta",
+        # Voice
+        "voice_processing": "🎤 Procesando mensaje de voz...",
+        "voice_failed_recognition": "❌ No se pudo reconocer el mensaje de voz",
+        "voice_question_transcribed": "🎤 <i>Pregunta:</i> {text}\n\n⏳ Analizando...",
+        "voice_error": "❌ Error al procesar el mensaje de voz",
         "help_message": "<b>🎬 YouTube Analizador</b>\n\n<b>Qué puedo hacer:</b>\n• Analizar videos de YouTube\n• Responder preguntas sobre videos\n• Crear resúmenes cortos\n• Trabajar con mensajes de voz\n\n<b>Cómo usar:</b>\n1. Envía un enlace de YouTube\n2. Recibe un análisis\n3. Haz preguntas\n4. Presiona \"Más corto\" para puntos clave",
     }
 }

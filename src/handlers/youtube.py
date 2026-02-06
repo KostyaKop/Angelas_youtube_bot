@@ -18,47 +18,7 @@ from src.utils.locales import get_message
 router = Router()
 logger = logging.getLogger(__name__)
 
-ERROR_NO_SUBTITLES = """
-⚠️ <b>Не вдалося отримати субтитри.</b>
 
-Можливі причини:
-• Субтитри вимкнені автором
-• Відео занадто нове
-• Технічні обмеження
-
-Спробуйте інше відео з доступними субтитрами.
-""".strip()
-
-ERROR_AI_FAILED = """
-🚫 <b>Технічна помилка</b>
-
-Не вдалося обробити відео. Можливо:
-• Відео занадто довге
-• Збій AI-моделі
-
-Спробуйте повторити запит через хвилину.
-""".strip()
-
-ERROR_INVALID_URL = """
-❌ <b>Невалідне посилання</b>
-
-Надішліть посилання на YouTube відео у форматі:
-• youtube.com/watch?v=...
-• youtu.be/...
-""".strip()
-
-ERROR_NO_CREDITS = """
-💰 <b>Закінчились кредити</b>
-
-На вашому рахунку немає кредитів для обробки відео.
-Перегляньте свою статистику: /mystats
-""".strip()
-
-ERROR_BLOCKED = """
-🚫 <b>Доступ заблоковано</b>
-
-Ваш обліковий запис заблоковано.
-""".strip()
 
 
 from src.config import Config
@@ -91,13 +51,13 @@ async def handle_youtube_url(
     
     # Check if user is blocked
     if user.is_blocked:
-        await message.answer(ERROR_BLOCKED)
+        await message.answer(get_message("error_blocked", lang))
         return
     
     # Check credits
     has_credits, remaining = await db.check_credits(user_id)
     if not has_credits:
-        await message.answer(ERROR_NO_CREDITS)
+        await message.answer(get_message("error_no_credits", lang))
         return
     
     try:
@@ -219,7 +179,7 @@ async def handle_shorter(
     # Get context from Redis
     context = await context_store.get(user_id)
     if not context or context.get("video_id") != video_id:
-        await callback.answer("Контекст застарів, надішліть відео знову")
+        await callback.answer(get_message("error_context_expired", lang))
         return
     
     await callback.answer(get_message("shorter_processing", lang))
@@ -231,4 +191,4 @@ async def handle_shorter(
         result = get_message("shorter_result", lang, content=shorter)
         await callback.message.answer(result)
     else:
-        await callback.answer("Не вдалось створити коротку версію")
+        await callback.answer(get_message("error_shorter_failed", lang))

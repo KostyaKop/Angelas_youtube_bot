@@ -78,13 +78,12 @@ async def cmd_help(message: Message, context_store: ContextStore) -> None:
 SETTINGS_BUTTONS = ["⚙️ Налаштування", "⚙️ Settings", "⚙️ Настройки", "⚙️ Ajustes"]
 
 @router.message(lambda msg: msg.text in SETTINGS_BUTTONS)
-async def handle_settings_button(message: Message) -> None:
+async def handle_settings_button(message: Message, context_store: ContextStore, db: DatabaseService) -> None:
     """Handle settings keyboard button press."""
     # Import here to avoid circular dependency
     from src.handlers.settings import show_settings
-    # Forward to settings handler - we need to get dependencies
-    # Since buttons are text, we just redirect user to use command
-    await message.answer("👉 Використовуйте /settings")
+    # Forward to settings handler
+    await show_settings(message, context_store, db)
 
 
 # Help button - all language variants
@@ -103,6 +102,7 @@ async def handle_help_button(message: Message, context_store: ContextStore) -> N
 STATS_BUTTONS = ["📊 Статистика", "📊 Stats", "📊 Estadísticas"]
 
 @router.message(lambda msg: msg.text in STATS_BUTTONS)
-async def handle_stats_button(message: Message) -> None:
+async def handle_stats_button(message: Message, context_store: ContextStore, db: DatabaseService) -> None:
     """Handle stats keyboard button press."""
-    await message.answer("👉 Використовуйте /mystats")
+    from src.handlers.settings import cmd_mystats
+    await cmd_mystats(message, db, context_store)

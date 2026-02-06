@@ -40,7 +40,7 @@ async def handle_voice_message(
     
     # Check if user is blocked
     if user.is_blocked:
-        await message.answer("🚫 <b>Доступ заблоковано</b>")
+        await message.answer(get_message("error_blocked", lang))
         return
     
     # Get context - voice messages are only for followup questions
@@ -50,7 +50,7 @@ async def handle_voice_message(
         return
     
     # Download voice file
-    processing_msg = await message.answer("🎤 Обробляю голосове повідомлення...")
+    processing_msg = await message.answer(get_message("voice_processing", lang))
     
     try:
         # Get file from Telegram
@@ -70,11 +70,11 @@ async def handle_voice_message(
         os.unlink(temp_path)
         
         if not transcribed_text:
-            await processing_msg.edit_text("❌ Не вдалося розпізнати голосове повідомлення")
+            await processing_msg.edit_text(get_message("voice_failed_recognition", lang))
             return
         
         # Show what was transcribed
-        await processing_msg.edit_text(f"🎤 <i>Питання:</i> {transcribed_text}\n\n⏳ Аналізую...")
+        await processing_msg.edit_text(get_message("voice_question_transcribed", lang, text=transcribed_text))
         
         # Process as followup question
         answer = await ai_analyzer.answer_followup(context, transcribed_text, lang=lang)
@@ -100,6 +100,6 @@ async def handle_voice_message(
     except Exception as e:
         logger.error(f"Voice message error: {e}")
         try:
-            await processing_msg.edit_text("❌ Помилка обробки голосового повідомлення")
+            await processing_msg.edit_text(get_message("voice_error", lang))
         except Exception:
-            await message.answer("❌ Помилка обробки голосового повідомлення")
+            await message.answer(get_message("voice_error", lang))

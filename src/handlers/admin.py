@@ -92,10 +92,14 @@ async def cmd_addcredits(message: Message, config: Config, db: DatabaseService) 
         await message.answer("❌ Формат: /addcredits &lt;user_id&gt; &lt;кількість&gt;")
         return
     
+    # Clean arguments from common formatting characters like < > [ ]
+    def clean_arg(arg: str) -> str:
+        return arg.strip().replace("<", "").replace(">", "").replace("[", "").replace("]", "")
+
     try:
-        user_id = int(args[0])
-        amount = int(args[1])
-    except ValueError:
+        user_id = int(clean_arg(args[0]))
+        amount = int(clean_arg(args[1]))
+    except (ValueError, IndexError):
         await message.answer("❌ Невірний формат. user_id та кількість мають бути числами.")
         return
     
@@ -119,9 +123,12 @@ async def cmd_setpremium(message: Message, config: Config, db: DatabaseService) 
         await message.answer("❌ Формат: /setpremium &lt;user_id&gt;")
         return
     
+    def clean_arg(arg: str) -> str:
+        return arg.strip().replace("<", "").replace(">", "").replace("[", "").replace("]", "")
+
     try:
-        user_id = int(args[0])
-    except ValueError:
+        user_id = int(clean_arg(args[0]))
+    except (ValueError, IndexError):
         await message.answer("❌ Невірний user_id")
         return
     
@@ -145,9 +152,12 @@ async def cmd_block(message: Message, config: Config, db: DatabaseService) -> No
         await message.answer("❌ Формат: /block &lt;user_id&gt;")
         return
     
+    def clean_arg(arg: str) -> str:
+        return arg.strip().replace("<", "").replace(">", "").replace("[", "").replace("]", "")
+
     try:
-        user_id = int(args[0])
-    except ValueError:
+        user_id = int(clean_arg(args[0]))
+    except (ValueError, IndexError):
         await message.answer("❌ Невірний user_id")
         return
     
@@ -171,9 +181,12 @@ async def cmd_unblock(message: Message, config: Config, db: DatabaseService) -> 
         await message.answer("❌ Формат: /unblock &lt;user_id&gt;")
         return
     
+    def clean_arg(arg: str) -> str:
+        return arg.strip().replace("<", "").replace(">", "").replace("[", "").replace("]", "")
+
     try:
-        user_id = int(args[0])
-    except ValueError:
+        user_id = int(clean_arg(args[0]))
+    except (ValueError, IndexError):
         await message.answer("❌ Невірний user_id")
         return
     

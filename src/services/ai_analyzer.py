@@ -74,7 +74,7 @@ RULES:
         """Initialize AI clients."""
         # Configure Gemini
         genai.configure(api_key=gemini_api_key)
-        self.gemini_model = genai.GenerativeModel("gemini-2.0-flash")
+        self.gemini_model = genai.GenerativeModel("gemini-2.5-flash-preview-09-2025")
         
         # Configure OpenAI
         self.openai_client = AsyncOpenAI(api_key=openai_api_key)

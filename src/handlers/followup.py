@@ -13,17 +13,7 @@ from src.utils.chunker import split_message
 router = Router()
 logger = logging.getLogger(__name__)
 
-ERROR_NO_CONTEXT = """
-🤔 <b>У вас поки немає активного відео для обговорення.</b>
 
-👇 Спочатку надішліть посилання на YouTube
-""".strip()
-
-ERROR_ANSWER_FAILED = """
-🚫 <b>Не вдалося відповісти на питання.</b>
-
-Спробуйте ще раз або надішліть нове відео.
-""".strip()
 
 
 from src.utils.locales import get_message
